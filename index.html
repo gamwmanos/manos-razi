@@ -24,6 +24,10 @@ img,video{width:90%;max-width:600px;margin:20px auto;display:block;border-radius
 .fade{animation:fadein 1s forwards;opacity:0}
 @keyframes fadein{to{opacity:1}}
 
+/* generic button */
+.btn{padding:.8rem 1.6rem;background:#ff6fa4;color:#fff;border:none;border-radius:8px;box-shadow:0 0 10px #0004;cursor:pointer;font-size:1rem}
+.btn:hover{transform:scale(1.05)}
+
 /* overlays */
 .overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
@@ -53,7 +57,7 @@ body.poop{animation:poopflash .4s alternate 3}
   </style>
 </head>
 <body>
-  <h1 class="fade">Δεν ψάχνω άλλο∙ σε βρήκα.</h1>
+  <h1 class="fade">Μρμ</h1>
 
   <img class="fade" src="photos/1.jpg" style="animation-delay:.3s">
   <img class="fade" src="photos/2.jpg" style="animation-delay:.6s">
@@ -64,8 +68,10 @@ body.poop{animation:poopflash .4s alternate 3}
     Ο browser σου δεν υποστηρίζει βίντεο. Κατέβασέ το <a href="videos/love.mp4">εδώ</a>.
   </video>
 
+  <button id="startQuiz" class="fade btn" style="animation-delay:1.5s" onclick="startQuiz()">Απάντησε και κέρδισε</button>
+
   <!-- QUIZ overlay -->
-  <div id="quiz" class="overlay">
+  <div id="quiz" class="overlay" style="display:none">
     <h2>Ποιος είναι ο πιο τέλειος άνθρωπος του κόσμου;</h2>
     <input id="answer" placeholder="Γράψε την απάντησή σου..." autocomplete="off">
     <button onclick="checkAnswer()">OK</button>
@@ -87,9 +93,13 @@ body.poop{animation:poopflash .4s alternate 3}
   </div>
 
   <script>
+  function startQuiz(){
+    document.getElementById('quiz').style.display='flex';
+    document.getElementById('answer').focus();
+  }
   function checkAnswer(){
     const val=document.getElementById('answer').value.trim().toLowerCase();
-    const ok=[ 'μανος','ο μανος','εσυ','εσύ','εσένα','εσένα.','ο μάνος','μάνος' ];
+    const ok=[ 'μανος','ο μανος','εσυ','εσύ','εσένα','εσένα.','ο μάνος','μάνος','μάνοσ','μανοσ','ο μάνοσ','ο μανοσ' ];
     const good=ok.some(t=>val.includes(t));
     if(good){
       document.getElementById('quiz').style.display='none';
