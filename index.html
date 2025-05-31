@@ -1,9 +1,8 @@
-```html
 <!DOCTYPE html>
 <html lang="el">
 <head>
   <meta charset="utf-8">
-  <title>Για σένα</title>
+  <title>Για το μρμ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- ================= GLOBAL STYLES & VARIABLES ================= -->
@@ -148,8 +147,7 @@
     }
 
     @keyframes bounce {
-      0%,
-      100% {
+      0%, 100% {
         transform: translate(-50%, 0);
       }
       50% {
@@ -258,6 +256,27 @@
       pointer-events: none; /* Prevent clicks on canvas */
       z-index: 0;
       opacity: 0.25; /* Slight transparency for subtle effect */
+    }
+
+    /* ================= POOP CONTAINER ================= */
+    #poopContainer {
+      /* Container for poop emojis when wrong answer */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Keep clicks through container */
+      z-index: 1002;
+      overflow: hidden;
+    }
+
+    .poop-emoji {
+      /* Each poop emoji styling */
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.8;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
     }
 
     /* ================= QUIZ & OVERLAY STYLES ================= */
@@ -397,14 +416,17 @@
   <!-- =========== PARTICLE HEARTS BACKGROUND CANVAS =========== -->
   <canvas id="heartCanvas"></canvas>
 
+  <!-- =========== POOP EMOJI CONTAINER =========== -->
+  <div id="poopContainer"></div>
+
   <!-- =========== HERO SECTION =========== -->
   <section id="hero">
     <!-- Main headline changed to “Μρμ” per request -->
     <h1>Μρμ</h1>
     <!-- Subtitle, initially hidden until revealed by scroll observer -->
-    <p class="hide">Κάθε beat της καρδιάς μου ψιθυρίζει το όνομά σου.</p>
+    <p class="hide">Τι να σε κάνω.</p>
     <!-- Button to scroll down to gallery, initially hidden -->
-    <button class="btn hide" onclick="scrollToSection('gallery')">Δες τις αναμνήσεις μας ↓</button>
+    <button class="btn hide" onclick="scrollToSection('gallery')">Αγαπημένες μας φώτο ↓</button>
     <!-- SVG scroll indicator arrow, always visible -->
     <svg class="scroll-indicator" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#fff" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
       <!-- Rounded rectangle for mouse shape -->
@@ -437,7 +459,7 @@
   <!-- =========== VIDEO SECTION =========== -->
   <section id="video">
     <!-- Video heading revealed on scroll -->
-    <h2 class="hide">Το τραγούδι μας</h2>
+    <h2 class="hide">Μρμρμρμρμ</h2>
     <!-- Responsive container for video -->
     <div class="responsive-media hide">
       <!-- Actual video element -->
@@ -479,6 +501,7 @@
     <!-- Card contents -->
     <div class="card">
       <h3>💖</h3>
+      <!-- Final message when gift is opened -->
       <p>— Κέρδισες να σε αφήσω να μου πάρεις τσίμπο —</p>
     </div>
   </div>
@@ -539,8 +562,11 @@
     /**************************************************************************/
     /* ================= QUIZ FUNCTIONALITY ============================== */
     /**************************************************************************/
-    // Predefined array of acceptable correct answers (lowercase)
-    const correctAnswers = ['ο μάνος', 'εσύ', 'μανος', 'μανός', 'εσυ'];
+    // Predefined array of acceptable correct answers (lowercase, no accents and with accents)
+    const correctAnswers = [
+      'ο μάνος', 'ο μανος', 'ο μανοσ', 'ο μάνοσ',
+      'μανος', 'μανός', 'μανοσ', 'μάνος', 'μάνοσ','εσύ','εσυ','μανοσ'
+    ];
 
     // Show the quiz overlay
     function startQuiz() {
@@ -551,9 +577,46 @@
       document.getElementById('answer').value = '';
     }
 
+    // Function to normalize input: trim and lowercase
+    function normalizeString(str) {
+      return str.trim().toLowerCase();
+    }
+
+    // Spawn multiple poop emojis randomly across screen when wrong
+    function spawnPoops() {
+      const container = document.getElementById('poopContainer');
+      // Clear existing poops if any
+      container.innerHTML = '';
+      // Generate 50 poop emojis
+      for (let i = 0; i < 50; i++) {
+        const poop = document.createElement('div');
+        poop.classList.add('poop-emoji');
+        poop.textContent = '💩';
+        // Random position within viewport
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        poop.style.left = `${x}px`;
+        poop.style.top = `${y}px`;
+        // Random rotation
+        const rot = Math.random() * 360;
+        poop.style.transform = `rotate(${rot}deg)`;
+        container.appendChild(poop);
+        // Fade out & move down after a moment
+        setTimeout(() => {
+          poop.style.opacity = '0';
+          poop.style.transform = `translateY(50px) rotate(${rot}deg)`;
+        }, 800 + Math.random() * 400); // Delay fade-out randomly between *800–1200ms*
+      }
+      // Remove all poop emojis after 2 seconds
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 2000);
+    }
+
     // Check the user's answer
     function checkAnswer() {
-      const userInput = document.getElementById('answer').value.trim().toLowerCase();
+      const rawInput = document.getElementById('answer').value;
+      const userInput = normalizeString(rawInput);
       const hintEl = document.getElementById('hint');
 
       // If the input matches one of the correct answers
@@ -563,12 +626,14 @@
         // Show gift overlay
         document.getElementById('gift').style.display = 'flex';
       } else {
-        // Trigger “poop flash” effect to indicate wrong answer
+        // Trigger “poop flash” effect on body background
         document.body.classList.add('poop');
         // Remove poop class after animation ends (3 cycles of 0.4s)
         setTimeout(() => {
           document.body.classList.remove('poop');
         }, 1200);
+        // Spawn poop emojis across screen
+        spawnPoops();
         // Show a hint asking to try again
         hintEl.textContent = 'Μμμ όχι ακριβώς… Δοκίμασε ξανά!';
       }
@@ -633,11 +698,15 @@
 
     // Draw method for HeartParticle
     HeartParticle.prototype.draw = function () {
-      const heartPath = new Path2D("M24 15c-4-8-20-9-20 7 0 9 9 17 20 28 11-11 20-19 20-28 0-16-16-15-20-7z");
+      const heartPath = new Path2D(
+        "M24 15c-4-8-20-9-20 7 0 9 9 17 20 28 11-11 20-19 20-28 0-16-16-15-20-7z"
+      );
       ctx.save();
-      ctx.fillStyle = `rgba(255, 111, 164, ${this.opacity})`; // Pink color with variable opacity
+      // Pink color with variable opacity
+      ctx.fillStyle = `rgba(255, 111, 164, ${this.opacity})`;
+      // Move to particle's x,y
       ctx.translate(this.x, this.y);
-      // Scale the path to desired size
+      // Scale the heart shape to the desired size
       ctx.scale(this.size / 40, this.size / 40);
       ctx.fill(heartPath);
       ctx.restore();
@@ -645,11 +714,13 @@
 
     // Animation loop for particle hearts
     function animateHearts() {
+      // Clear entire canvas each frame
       ctx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
       particles.forEach(particle => {
         particle.update();
         particle.draw();
       });
+      // Request next frame
       requestAnimationFrame(animateHearts);
     }
 
@@ -670,7 +741,7 @@
       initParticles();
     });
 
-    // Initial setup for particles
+    // Initial setup for particles on load
     resizeCanvas();
     initParticles();
 
@@ -679,7 +750,7 @@
     /**************************************************************************/
     // Function to launch confetti when gift is opened
     function launchConfetti() {
-      /* 
+      /*
         We’ll create simple confetti pieces that fall downwards with random
         colors and rotations. This is a lightweight custom implementation.
       */
@@ -769,36 +840,11 @@
     };
 
     /**************************************************************************/
-    /* ================= ADDITIONAL UTILITY FUNCTIONS ======================= */
-    /**************************************************************************/
-    // Trim whitespace and convert to lowercase for uniformity
-    function normalizeString(str) {
-      return str.trim().toLowerCase();
-    }
-
-    // Check if a string appears in the accepted answers array
-    function isCorrectAnswer(input) {
-      return correctAnswers.includes(normalizeString(input));
-    }
-
-    // Optionally, we could add sound playback on certain events.
-    // Example: play a heart beat sound on hero load (commented out).
-    // function playBeat() {
-    //   const audio = new Audio('sounds/heartbeat.mp3');
-    //   audio.play();
-    // }
-    // window.addEventListener('load', playBeat);
-
-    /**************************************************************************/
     /* ================= INITIALIZATION ON PAGE LOAD ========================= */
     /**************************************************************************/
     window.addEventListener('load', () => {
-      // Optionally focus on hero text or trigger any load animations
-      // Example: document.querySelector('#hero h1').classList.add('popin');
-      // For now, nothing else needed on load since animations already set.
-
-      // Reveal buttons and headings that have “hide” class
-      // IntersectionObserver will handle this as the page scrolls.
+      // IntersectionObserver will handle revealing elements as user scrolls.
+      // No additional initialization needed here currently.
     });
 
   </script>
