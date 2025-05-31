@@ -1,121 +1,806 @@
+```html
 <!DOCTYPE html>
 <html lang="el">
 <head>
   <meta charset="utf-8">
-  <title>Για το κορίτσι μου</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Για σένα</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ================= GLOBAL STYLES & VARIABLES ================= -->
   <style>
-/* === ροζ background με καρδιές + λουλούδια === */
-body{
-  margin:0;
-  font-family:sans-serif;
-  text-align:center;
-  color:#fff;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M24 15c-4-8-20-9-20 7 0 9 9 17 20 28 11-11 20-19 20-28 0-16-16-15-20-7z' fill='%23ff6fa4' fill-opacity='0.5'/%3E%3C/svg%3E") repeat,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Ccircle cx='60' cy='20' r='15'/%3E%3Ccircle cx='20' cy='60' r='15'/%3E%3Ccircle cx='60' cy='100' r='15'/%3E%3Ccircle cx='100' cy='60' r='15'/%3E%3Ccircle cx='60' cy='60' r='15'/%3E%3C/g%3E%3C/svg%3E") repeat,
-    linear-gradient(135deg,#ffdbe9 0%,#ffcee2 100%);
-  background-attachment:fixed;
-  background-size:80px 80px,120px 120px,auto;
-}
+    /* ================= CSS VARIABLES FOR CONSISTENCY ================= */
+    :root {
+      /* Primary pink for hearts, buttons, accents */
+      --pink: #ff6fa4;
+      /* Lighter pink for backgrounds and gradients */
+      --light-pink: #ffdbe9;
+      /* Even lighter pink for gradients */
+      --lighter-pink: #ffcee2;
+      /* Pure white for text on colored backgrounds */
+      --white: #ffffff;
+      /* Standard box-shadow for cards and modals */
+      --shadow: 0 0 15px #0004;
+      /* Standard border-radius for rounded corners */
+      --radius: 12px;
+      /* Inline SVG for repeating heart pattern */
+      --heart-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M24 15c-4-8-20-9-20 7 0 9 9 17 20 28 11-11 20-19 20-28 0-16-16-15-20-7z' fill='%23ff6fa4' fill-opacity='0.55'/%3E%3C/svg%3E");
+      /* Inline SVG for repeating flower pattern */
+      --flower-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Ccircle cx='60' cy='20' r='15'/%3E%3Ccircle cx='20' cy='60' r='15'/%3E%3Ccircle cx='60' cy='100' r='15'/%3E%3Ccircle cx='100' cy='60' r='15'/%3E%3Ccircle cx='60' cy='60' r='15'/%3E%3C/g%3E%3C/svg%3E");
+    }
 
-h1{margin:40px 0;font-size:2.5rem}
-img,video{width:90%;max-width:600px;margin:20px auto;display:block;border-radius:12px;box-shadow:0 0 15px #0004}
-.fade{animation:fadein 1s forwards;opacity:0}
-@keyframes fadein{to{opacity:1}}
+    /* ================= RESET & BASE STYLES ================= */
+    * {
+      /* Ensure border-box sizing everywhere */
+      box-sizing: border-box;
+      /* Remove default spacing */
+      margin: 0;
+      padding: 0;
+    }
 
-/* generic button */
-.btn{padding:.8rem 1.6rem;background:#ff6fa4;color:#fff;border:none;border-radius:8px;box-shadow:0 0 10px #0004;cursor:pointer;font-size:1rem}
-.btn:hover{transform:scale(1.05)}
+    body {
+      /* Use a smooth sans-serif font */
+      font-family: sans-serif;
+      /* White text for readability */
+      color: var(--white);
+      /* Center-align text in most sections */
+      text-align: center;
+      /* Background: heart pattern, flower pattern, then pink gradient */
+      background:
+        var(--heart-svg) repeat,
+        var(--flower-svg) repeat,
+        linear-gradient(135deg, var(--light-pink) 0%, var(--lighter-pink) 100%);
+      /* Fix background so patterns do not scroll */
+      background-attachment: fixed;
+      /* Define size of each pattern layer */
+      background-size: 80px 80px, 120px 120px, auto;
+      /* Prevent horizontal scrollbar from accidental overflow */
+      overflow-x: hidden;
+    }
 
-/* overlays */
-.overlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.85);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1rem;
-  z-index:1000;padding:2rem;
-}
-.overlay h2,.overlay p{margin:0}
-.overlay input{padding:.6rem 1rem;border:none;border-radius:8px;font-size:1rem}
-.overlay button{padding:.6rem 1.5rem;border:none;border-radius:8px;background:#ff6fa4;color:#fff;font-size:1rem;cursor:pointer}
+    section {
+      /* Vertical padding for spacing between sections */
+      padding: 4rem 0;
+      /* Relative positioning for child absolute elements if needed */
+      position: relative;
+    }
 
-/* poop flash */
-body.poop{animation:poopflash .4s alternate 3}
-@keyframes poopflash{from{background:#4d2600}to{background:#2b1100}}
+    .hide {
+      /* Initially hidden elements, used for scroll-reveal */
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease-out;
+    }
 
-/* gift present */
-#present{width:200px;height:200px;background:#ff6fa4;border-radius:16px;position:relative;cursor:pointer;transition:transform .3s;box-shadow:0 0 20px #0006}
-#present:hover{transform:scale(1.05)}
-#present::before,#present::after{content:'';position:absolute;background:#fff}
-#present::before{width:40px;height:100%;left:50%;top:0;transform:translateX(-50%)}
-#present::after{height:40px;width:100%;left:0;top:50%;transform:translateY(-50%)}
+    .reveal {
+      /* When revealed, restore full opacity and remove transform */
+      opacity: 1;
+      transform: none;
+    }
 
-/* card */
-.card{background:#fff;color:#ff6fa4;padding:2rem;border-radius:16px;max-width:90%;max-height:90%;overflow:auto;box-shadow:0 0 25px #0008;text-align:center}
-.card h3{font-size:3rem;margin:0 0 1rem}
-.card p{color:#ff6fa4;font-size:1.2rem;margin:0}
+    .btn {
+      /* Base styling for buttons */
+      padding: 0.9rem 1.8rem;
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #0004;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: transform 0.25s;
+    }
+
+    .btn:hover {
+      /* Slight scale-up on hover for feedback */
+      transform: scale(1.05);
+    }
+
+    /* ================= HERO SECTION ================= */
+    #hero {
+      /* Full-screen hero section */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    #hero h1 {
+      /* Large headline font size */
+      font-size: 5rem;
+      letter-spacing: 3px;
+      /* Pop-in animation on load */
+      animation: popin 1s ease forwards;
+    }
+
+    #hero p {
+      /* Supporting subtitle text style */
+      font-size: 1.3rem;
+      max-width: 420px;
+      opacity: 0.9;
+    }
+
+    /* Keyframes for pop-in animation */
+    @keyframes popin {
+      0% {
+        transform: scale(0.2);
+        opacity: 0;
+      }
+      80% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ================= SCROLL INDICATOR ================= */
+    .scroll-indicator {
+      /* Position at bottom center of hero */
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      /* Bounce animation to hint scrolling */
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%,
+      100% {
+        transform: translate(-50%, 0);
+      }
+      50% {
+        transform: translate(-50%, 10px);
+      }
+    }
+
+    /* ================= GALLERY SECTION ================= */
+    #gallery {
+      padding: 5rem 2rem;
+    }
+
+    .gallery-grid {
+      /* Responsive grid with minimum column width */
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .gallery-grid img {
+      /* Make images fill their grid cell */
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform 0.4s, box-shadow 0.4s;
+      cursor: pointer;
+    }
+
+    .gallery-grid img:hover {
+      /* Lift and shadow on hover */
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 25px #0004;
+    }
+
+    /* ================= LIGHTBOX STYLES ================= */
+    #lightbox {
+      /* Hidden by default, covers full viewport when active */
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      padding: 1rem;
+    }
+
+    #lightbox img {
+      /* Centered image max size */
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: var(--radius);
+      box-shadow: 0 0 20px #0008;
+      animation: zoom 0.5s ease;
+    }
+
+    @keyframes zoom {
+      from {
+        transform: scale(0.6);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ================= VIDEO SECTION ================= */
+    .responsive-media {
+      /* Container to maintain 16:9 aspect ratio for video */
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .responsive-media::before {
+      /* Aspect ratio trick: 56.25% is 9/16 */
+      content: "";
+      display: block;
+      padding-top: 56.25%;
+    }
+
+    .responsive-media video {
+      /* Position absolute to fill container */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ================= PARTICLE HEARTS (CANVAS) ================= */
+    canvas#heartCanvas {
+      /* Fullscreen transparent canvas for hearts effect */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Prevent clicks on canvas */
+      z-index: 0;
+      opacity: 0.25; /* Slight transparency for subtle effect */
+    }
+
+    /* ================= QUIZ & OVERLAY STYLES ================= */
+    .overlay {
+      /* Fullscreen semi-transparent overlay container */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      padding: 2rem;
+    }
+
+    .overlay input {
+      /* Text input styling within overlay */
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 260px;
+    }
+
+    .overlay button {
+      /* Buttons inside overlay share base button style */
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--pink);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* ================= POOP FLASH EFFECT ================= */
+    body.poop {
+      /* Rapid alternate background colors for “poop flash” */
+      animation: poopflash 0.4s alternate 3;
+    }
+
+    @keyframes poopflash {
+      from {
+        background: #4d2600;
+      }
+      to {
+        background: #2b1100;
+      }
+    }
+
+    /* ================= PRESENT & CARD OVERLAY ================= */
+    #present {
+      /* Box styled like a gift with ribbon */
+      width: 200px;
+      height: 200px;
+      background: var(--pink);
+      border-radius: 16px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.35s;
+      box-shadow: 0 0 20px #0006;
+    }
+
+    #present:hover {
+      /* Slight scale-up on hover */
+      transform: scale(1.07);
+    }
+
+    /* White ribbon vertical */
+    #present::before,
+    #present::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+    }
+
+    /* Vertical ribbon stripe in the middle */
+    #present::before {
+      width: 40px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+    }
+
+    /* Horizontal ribbon stripe in the middle */
+    #present::after {
+      height: 40px;
+      width: 100%;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .card {
+      /* Card that appears when gift is clicked */
+      background: #fff;
+      color: var(--pink);
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+      box-shadow: 0 0 25px #0008;
+      text-align: center;
+      animation: popin 0.6s ease;
+    }
+
+    .card h3 {
+      /* Large emoji or title inside card */
+      font-size: 3rem;
+      margin: 0 0 1rem;
+    }
+
+    .card p {
+      /* Card text styling */
+      color: var(--pink);
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    /* ================= FOOTER ================= */
+    footer {
+      /* Small footer at bottom */
+      padding: 2rem 0;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
-  <h1 class="fade">Μρμ</h1>
+  <!-- =========== PARTICLE HEARTS BACKGROUND CANVAS =========== -->
+  <canvas id="heartCanvas"></canvas>
 
-  <img class="fade" src="photos/1.jpeg" style="animation-delay:.3s">
-  <img class="fade" src="photos/2.jpeg" style="animation-delay:.6s">
-  <img class="fade" src="photos/3.jpeg" style="animation-delay:.9s">
+  <!-- =========== HERO SECTION =========== -->
+  <section id="hero">
+    <!-- Main headline changed to “Μρμ” per request -->
+    <h1>Μρμ</h1>
+    <!-- Subtitle, initially hidden until revealed by scroll observer -->
+    <p class="hide">Κάθε beat της καρδιάς μου ψιθυρίζει το όνομά σου.</p>
+    <!-- Button to scroll down to gallery, initially hidden -->
+    <button class="btn hide" onclick="scrollToSection('gallery')">Δες τις αναμνήσεις μας ↓</button>
+    <!-- SVG scroll indicator arrow, always visible -->
+    <svg class="scroll-indicator" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#fff" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+      <!-- Rounded rectangle for mouse shape -->
+      <rect x="1" y="1" width="22" height="38" rx="11"/>
+      <!-- Circle inside to indicate scroll -->
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+  </section>
 
-  <video controls preload="auto" class="fade" style="animation-delay:1.2s">
-    <source src="videos/love.mp4" type="video/mp4">
-    Ο browser σου δεν υποστηρίζει βίντεο. Κατέβασέ το <a href="videos/love.mp4">εδώ</a>.
-  </video>
+  <!-- =========== GALLERY SECTION =========== -->
+  <section id="gallery">
+    <!-- Gallery heading, revealed on scroll -->
+    <h2 class="hide">Στιγμές</h2>
+    <!-- Responsive grid of images, revealed on scroll -->
+    <div class="gallery-grid hide">
+      <!-- Each image click opens the lightbox -->
+      <img src="photos/1.jpeg" alt="photo1" onclick="openLightbox(this.src)">
+      <img src="photos/2.jpeg" alt="photo2" onclick="openLightbox(this.src)">
+      <img src="photos/3.jpeg" alt="photo3" onclick="openLightbox(this.src)">
+      <!-- Add more <img> as needed, same pattern -->
+    </div>
+  </section>
 
-  <button id="startQuiz" class="fade btn" style="animation-delay:1.5s" onclick="startQuiz()">Απάντησε και κέρδισε</button>
+  <!-- =========== LIGHTBOX OVERLAY =========== -->
+  <div id="lightbox" onclick="closeLightbox()">
+    <!-- Dynamically set src & alt inside JS when opened -->
+    <img src="" alt="big">
+  </div>
 
-  <!-- QUIZ overlay -->
-  <div id="quiz" class="overlay" style="display:none">
+  <!-- =========== VIDEO SECTION =========== -->
+  <section id="video">
+    <!-- Video heading revealed on scroll -->
+    <h2 class="hide">Το τραγούδι μας</h2>
+    <!-- Responsive container for video -->
+    <div class="responsive-media hide">
+      <!-- Actual video element -->
+      <video controls preload="auto">
+        <source src="videos/love.mp4" type="video/mp4">
+        <!-- Fallback message if browser does not support video -->
+        Ο browser σου δεν υποστηρίζει βίντεο.
+      </video>
+    </div>
+  </section>
+
+  <!-- =========== QUIZ BUTTON SECTION =========== -->
+  <section id="quiz-btn">
+    <!-- Button to start quiz, revealed on scroll -->
+    <button id="startQuiz" class="btn hide" onclick="startQuiz()">Απάντησε και κέρδισε</button>
+  </section>
+
+  <!-- =========== QUIZ OVERLAY =========== -->
+  <div id="quiz" class="overlay" style="display: none;">
+    <!-- Quiz question text -->
     <h2>Ποιος είναι ο πιο τέλειος άνθρωπος του κόσμου;</h2>
+    <!-- Input for user answer -->
     <input id="answer" placeholder="Γράψε την απάντησή σου..." autocomplete="off">
+    <!-- Button to submit answer -->
     <button onclick="checkAnswer()">OK</button>
+    <!-- Hint text appears if incorrect answer -->
     <p id="hint"></p>
   </div>
 
-  <!-- gift overlay -->
-  <div id="gift" class="overlay" style="display:none">
+  <!-- =========== GIFT OVERLAY =========== -->
+  <div id="gift" class="overlay" style="display: none;">
+    <!-- Gift box element, clicking triggers openGift() -->
     <div id="present" onclick="openGift()" title="Κάνε κλικ να ανοίξει"></div>
     <p>Άνοιξέ με! 🎁</p>
   </div>
 
-  <!-- card overlay -->
-  <div id="card" class="overlay" style="display:none">
+  <!-- =========== CARD OVERLAY =========== -->
+  <div id="card" class="overlay" style="display: none;">
+    <!-- Card contents -->
     <div class="card">
       <h3>💖</h3>
-      <p>— Κέρδισες το δικαίωμα να μου πάρεις τσίμπο!!!! —</p>
+      <p>— Κέρδισες να σε αφήσω να μου πάρεις τσίμπο —</p>
     </div>
   </div>
 
+  <!-- =========== FOOTER =========== -->
+  <footer>
+    Φτιαγμένο με αγάπη &hearts; από τον Μάνο.
+  </footer>
+
+  <!-- ================= SCRIPTS ================= -->
   <script>
-  function startQuiz(){
-    document.getElementById('quiz').style.display='flex';
-    document.getElementById('answer').focus();
-  }
-  function checkAnswer(){
-    const val=document.getElementById('answer').value.trim().toLowerCase();
-    const ok=[ 'μανος','ο μανος','εσυ','εσύ','εσένα','εσένα.','ο μάνος','μάνος','μάνοσ','μανοσ','ο μάνοσ','ο μανοσ' ];
-    const good=ok.some(t=>val.includes(t));
-    if(good){
-      document.getElementById('quiz').style.display='none';
-      document.getElementById('gift').style.display='flex';
-    }else{
-      document.getElementById('hint').innerHTML='💩 Χα! Όχι... δοκίμασε ξανά!';
-      document.body.classList.add('poop');
-      setTimeout(()=>document.body.classList.remove('poop'),800);
-      document.getElementById('answer').value='';
-      document.getElementById('answer').focus();
+    /**************************************************************************/
+    /* ================= SCROLL REVEAL FUNCTIONALITY ========================= */
+    /**************************************************************************/
+    // Create an IntersectionObserver to reveal elements when they scroll into view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // If the element is in view (intersection ratio > threshold)
+        if (entry.isIntersecting) {
+          // Add reveal class to transition from hide to visible
+          entry.target.classList.add('reveal');
+          // Stop observing this element (we only want to reveal once)
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.2  // Trigger reveal when 20% of element is visible
+    });
+
+    // Observe all elements that have the 'hide' class
+    document.querySelectorAll('.hide').forEach(el => observer.observe(el));
+
+    // Smooth scroll to specified section by ID
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
     }
-  }
-  function openGift(){
-    document.getElementById('gift').style.display='none';
-    document.getElementById('card').style.display='flex';
-  }
+
+    /**************************************************************************/
+    /* ================= LIGHTBOX FUNCTIONALITY ============================== */
+    /**************************************************************************/
+    // Open the lightbox overlay with the provided image source
+    function openLightbox(src) {
+      const lb = document.getElementById('lightbox');
+      const img = lb.querySelector('img');
+      // Set the image source
+      img.src = src;
+      // Display the lightbox container
+      lb.style.display = 'flex';
+    }
+
+    // Close the lightbox when user clicks outside the image
+    function closeLightbox() {
+      const lb = document.getElementById('lightbox');
+      // Hide the lightbox container
+      lb.style.display = 'none';
+    }
+
+    /**************************************************************************/
+    /* ================= QUIZ FUNCTIONALITY ============================== */
+    /**************************************************************************/
+    // Predefined array of acceptable correct answers (lowercase)
+    const correctAnswers = ['ο μάνος', 'εσύ', 'μανος', 'μανός', 'εσυ'];
+
+    // Show the quiz overlay
+    function startQuiz() {
+      document.getElementById('quiz').style.display = 'flex';
+      // Clear any previous hints
+      document.getElementById('hint').textContent = '';
+      // Clear previous answer value
+      document.getElementById('answer').value = '';
+    }
+
+    // Check the user's answer
+    function checkAnswer() {
+      const userInput = document.getElementById('answer').value.trim().toLowerCase();
+      const hintEl = document.getElementById('hint');
+
+      // If the input matches one of the correct answers
+      if (correctAnswers.includes(userInput)) {
+        // Hide quiz overlay
+        document.getElementById('quiz').style.display = 'none';
+        // Show gift overlay
+        document.getElementById('gift').style.display = 'flex';
+      } else {
+        // Trigger “poop flash” effect to indicate wrong answer
+        document.body.classList.add('poop');
+        // Remove poop class after animation ends (3 cycles of 0.4s)
+        setTimeout(() => {
+          document.body.classList.remove('poop');
+        }, 1200);
+        // Show a hint asking to try again
+        hintEl.textContent = 'Μμμ όχι ακριβώς… Δοκίμασε ξανά!';
+      }
+    }
+
+    /**************************************************************************/
+    /* ================= GIFT & CARD FUNCTIONALITY ========================== */
+    /**************************************************************************/
+    // Called when user clicks on the gift box (#present)
+    function openGift() {
+      // Hide gift overlay
+      document.getElementById('gift').style.display = 'none';
+      // Show card overlay with the final message
+      document.getElementById('card').style.display = 'flex';
+    }
+
+    /**************************************************************************/
+    /* ================= PARTICLE HEARTS BACKGROUND ========================= */
+    /**************************************************************************/
+    // Create particles to float upwards (like hearts)
+    const heartCanvas = document.getElementById('heartCanvas');
+    const ctx = heartCanvas.getContext('2d');
+    let particles = [];
+
+    // Resize canvas to full viewport dimensions
+    function resizeCanvas() {
+      heartCanvas.width = window.innerWidth;
+      heartCanvas.height = window.innerHeight;
+    }
+
+    // Generate a random number between min and max
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    // Particle (heart) constructor function
+    function HeartParticle() {
+      // Initial position at a random x, start below the canvas to float up
+      this.x = randomRange(0, heartCanvas.width);
+      this.y = heartCanvas.height + randomRange(20, 100);
+      // Random size and speed
+      this.size = randomRange(10, 25);
+      this.speed = randomRange(0.5, 1.5);
+      this.opacity = randomRange(0.2, 0.5);
+    }
+
+    // Update and draw each particle on each animation frame
+    HeartParticle.prototype.update = function () {
+      // Move upwards
+      this.y -= this.speed;
+      // Slowly fade out as it goes up
+      this.opacity -= 0.001;
+      // If fully faded or moved above canvas, reset particle to bottom again
+      if (this.y < -this.size || this.opacity <= 0) {
+        this.x = randomRange(0, heartCanvas.width);
+        this.y = heartCanvas.height + randomRange(20, 100);
+        this.size = randomRange(10, 25);
+        this.speed = randomRange(0.5, 1.5);
+        this.opacity = randomRange(0.2, 0.5);
+      }
+    };
+
+    // Draw method for HeartParticle
+    HeartParticle.prototype.draw = function () {
+      const heartPath = new Path2D("M24 15c-4-8-20-9-20 7 0 9 9 17 20 28 11-11 20-19 20-28 0-16-16-15-20-7z");
+      ctx.save();
+      ctx.fillStyle = `rgba(255, 111, 164, ${this.opacity})`; // Pink color with variable opacity
+      ctx.translate(this.x, this.y);
+      // Scale the path to desired size
+      ctx.scale(this.size / 40, this.size / 40);
+      ctx.fill(heartPath);
+      ctx.restore();
+    };
+
+    // Animation loop for particle hearts
+    function animateHearts() {
+      ctx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animateHearts);
+    }
+
+    // Initialize particles and start animation
+    function initParticles() {
+      particles = [];
+      // Create around 100 particles for fullness
+      for (let i = 0; i < 100; i++) {
+        particles.push(new HeartParticle());
+      }
+      animateHearts();
+    }
+
+    // Ensure canvas resizes on window resize
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      // Reinitialize particles to fit new size
+      initParticles();
+    });
+
+    // Initial setup for particles
+    resizeCanvas();
+    initParticles();
+
+    /**************************************************************************/
+    /* ================= CONFETTI ON GIFT OPEN =============================== */
+    /**************************************************************************/
+    // Function to launch confetti when gift is opened
+    function launchConfetti() {
+      /* 
+        We’ll create simple confetti pieces that fall downwards with random
+        colors and rotations. This is a lightweight custom implementation.
+      */
+      const confettiCanvas = document.createElement('canvas');
+      confettiCanvas.id = 'confettiCanvas';
+      confettiCanvas.style.position = 'fixed';
+      confettiCanvas.style.top = '0';
+      confettiCanvas.style.left = '0';
+      confettiCanvas.style.width = '100%';
+      confettiCanvas.style.height = '100%';
+      confettiCanvas.style.pointerEvents = 'none';
+      confettiCanvas.style.zIndex = '1002';
+      document.body.appendChild(confettiCanvas);
+      const confettiCtx = confettiCanvas.getContext('2d');
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+
+      const confettiPieces = [];
+      const colors = ['#ff6fa4', '#ffdbe9', '#ffffff', '#ffcee2'];
+
+      // Constructor for confetti piece
+      function ConfettiPiece() {
+        this.x = randomRange(0, confettiCanvas.width);
+        this.y = randomRange(-confettiCanvas.height, 0);
+        this.size = randomRange(5, 12);
+        this.speedY = randomRange(1, 3);
+        this.angle = randomRange(0, Math.PI * 2);
+        this.spinSpeed = randomRange(0.01, 0.03);
+        this.color = colors[Math.floor(randomRange(0, colors.length))];
+      }
+
+      // Update confetti position and rotation
+      ConfettiPiece.prototype.update = function () {
+        this.y += this.speedY;
+        this.angle += this.spinSpeed;
+        // Reset if below screen
+        if (this.y > confettiCanvas.height) {
+          this.y = randomRange(-confettiCanvas.height, 0);
+          this.x = randomRange(0, confettiCanvas.width);
+        }
+      };
+
+      // Draw confetti as small rotating rectangles
+      ConfettiPiece.prototype.draw = function () {
+        confettiCtx.save();
+        confettiCtx.translate(this.x, this.y);
+        confettiCtx.rotate(this.angle);
+        confettiCtx.fillStyle = this.color;
+        confettiCtx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        confettiCtx.restore();
+      };
+
+      // Initialize multiple confetti pieces
+      function initConfetti() {
+        for (let i = 0; i < 200; i++) {
+          confettiPieces.push(new ConfettiPiece());
+        }
+      }
+
+      // Animation loop for confetti
+      function animateConfetti() {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confettiPieces.forEach(piece => {
+          piece.update();
+          piece.draw();
+        });
+        requestAnimationFrame(animateConfetti);
+      }
+
+      // Launch confetti: init and animate
+      initConfetti();
+      animateConfetti();
+
+      // Remove confetti canvas after 8 seconds to clean up
+      setTimeout(() => {
+        document.body.removeChild(confettiCanvas);
+      }, 8000);
+    }
+
+    // Modify openGift to also launch confetti
+    const originalOpenGift = openGift;
+    openGift = function() {
+      // First show the card
+      originalOpenGift();
+      // Then launch confetti effect
+      launchConfetti();
+    };
+
+    /**************************************************************************/
+    /* ================= ADDITIONAL UTILITY FUNCTIONS ======================= */
+    /**************************************************************************/
+    // Trim whitespace and convert to lowercase for uniformity
+    function normalizeString(str) {
+      return str.trim().toLowerCase();
+    }
+
+    // Check if a string appears in the accepted answers array
+    function isCorrectAnswer(input) {
+      return correctAnswers.includes(normalizeString(input));
+    }
+
+    // Optionally, we could add sound playback on certain events.
+    // Example: play a heart beat sound on hero load (commented out).
+    // function playBeat() {
+    //   const audio = new Audio('sounds/heartbeat.mp3');
+    //   audio.play();
+    // }
+    // window.addEventListener('load', playBeat);
+
+    /**************************************************************************/
+    /* ================= INITIALIZATION ON PAGE LOAD ========================= */
+    /**************************************************************************/
+    window.addEventListener('load', () => {
+      // Optionally focus on hero text or trigger any load animations
+      // Example: document.querySelector('#hero h1').classList.add('popin');
+      // For now, nothing else needed on load since animations already set.
+
+      // Reveal buttons and headings that have “hide” class
+      // IntersectionObserver will handle this as the page scrolls.
+    });
+
   </script>
 </body>
 </html>
